@@ -2,6 +2,9 @@ import "./LoginForm.css";
 import axios from "axios";
 import { useState } from "react";
 import jwt_decode from 'jwt-decode';
+import {FaDoorOpen, FaGlasses} from 'react-icons/fa';
+import {Link} from 'react-router-dom';
+import _ from 'lodash';
 
 export function LoginForm({onLogin}) {
 
@@ -10,11 +13,25 @@ export function LoginForm({onLogin}) {
     const [success,setSuccess] = useState("");
     const [error, setError] = useState("");
 
+    const emailError = !email ? 'Email can not be left blank' :
+    !email.includes('@') ? 'Email must include @ sign.' : '';
+
+    const passwordError = !password ? 'Password can not be left blank' :
+    password.length < 8 ? 'Password must be at least 8 characers' : '';
+
+
+
     function onSubmitLogin(evt){
         evt.preventDefault();
         console.log(`the email is ${email} and the password is ${password}`);
 
-
+        if(emailError){
+          setError(emailError);
+          return;
+        }else if(passwordError){
+          setError(passwordError);
+          return;
+        }
 
         axios('http://localhost:5000/api/users/login',{
             method:'post',
@@ -38,7 +55,30 @@ export function LoginForm({onLogin}) {
         })
         .catch((err) =>{
             setSuccess(""); 
-            setError(err.response.data.message)
+          //  setError(err.response.data.message)
+
+        //setError(err.message);
+        const resError = err?.response?.data?.error;
+
+
+        //server errors
+          if(typeof resError === 'string'){
+            setError(resError);
+        }
+        //Errors from Joi
+      else if(resError.details){
+            setError(_.map(resError.details, (x) => <div>{x.message}</div>))
+        }else{
+            setError(err.response.data.message);
+        }
+
+        //Errors from Joi
+        // if(resError.details){
+        //     setError(_.map(resError.details, (x) => <div>{x.message}</div>))
+        // }else{
+        //     setError(err.response.data.message);
+        // }
+
         })
     }
 
@@ -54,7 +94,7 @@ export function LoginForm({onLogin}) {
                     <div className="mb-md-5 mt-md-4 pb-5">
                       <h2 className="fw-bold mb-2 text-uppercase">Login</h2>
                       <p className="text-white-50 mb-5">
-                        Please enter your email and password! 
+                        Please enter your email and password! <FaGlasses />
                       </p>
 
                       <div className="form-outline form-white mb-4">
@@ -75,6 +115,7 @@ export function LoginForm({onLogin}) {
                           id="txtPassword"
                           className="form-control form-control-lg"
                           onChange={(evt) => setPassword(evt.target.value)}
+                          
                         />
                         <label className="form-label" htmlFor="txtPassword">
                           Password
@@ -91,7 +132,7 @@ export function LoginForm({onLogin}) {
                         className="btn btn-outline-light btn-lg px-5"
                         type="submit" onClick={(evt) => onSubmitLogin(evt)}
                       >
-                        Login
+                       <FaDoorOpen /> Login
                       </button>
                       {success && <p className="text-success">{success}</p>}
                       {error && <p className="text-danger">{error}</p>}
@@ -112,9 +153,9 @@ export function LoginForm({onLogin}) {
                     <div>
                       <p className="mb-0">
                         Don't have an account?{" "}
-                        <a href="#!" className="text-white-50 fw-bold">
+                        <Link to="/user/register" className="text-white-50 fw-bold">
                           Sign Up
-                        </a>
+                        </Link>
                       </p>
                     </div>
                   </div>

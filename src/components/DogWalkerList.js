@@ -30,8 +30,8 @@ export function DogWalkerList({auth}){
             {_.isEmpty(dogWalkers) && <div>No items found</div>}
             <div className='row'>
                 {_.map(dogWalkers, (walker) => (
-                    <div className='col-2'>
-                        <DogWalkerItem walker={walker}/>
+                    <div className='col-2' key={walker._id}>
+                        <DogWalkerItem walker={walker} auth={auth} />
                     </div>
                 ))}
             </div>

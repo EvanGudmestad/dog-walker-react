@@ -6,6 +6,8 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap/dist/js/bootstrap.min.js';
 import { NavBar } from './components/NavBar';
 import { useState } from 'react';
+import { RegisterForm } from './components/RegisterForm';
+import { DogWalkerEditor } from './components/DogWalkerEditor';
 
 
 
@@ -19,16 +21,22 @@ function App() {
     navigate('/walker/list');
   }
 
+  function onLogout(){
+    setAuth(null);
+  }
+
   return (
     
     <div className="App container d-flex flex-column min-vh-100">
      <header>
-      <NavBar />
+      <NavBar auth={auth} onLogout={onLogout} />
      </header>
      <main className='flex-grow-1'>
      <Routes>
           <Route path="/" element={<LoginForm onLogin={onLogin} />} />
           <Route path="/walker/list" element={<DogWalkerList auth={auth} />} />
+          <Route path="/user/register" element={<RegisterForm onLogin={onLogin} />} />
+          <Route path="/walker/:walkerId" element={<DogWalkerEditor auth={auth} />} />
       </Routes>  
       </main>
       <footer>
