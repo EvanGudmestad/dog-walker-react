@@ -33,7 +33,7 @@ export function LoginForm({onLogin}) {
           return;
         }
 
-        axios('http://localhost:5000/api/users/login',{
+        axios(`${process.env.REACT_APP_API_URL}/api/users/login`,{
             method:'post',
             data:{email:email,password:password},
         }).then((res) => {
@@ -62,16 +62,21 @@ export function LoginForm({onLogin}) {
 
 
         //server errors
-          if(typeof resError === 'string'){
-            setError(resError);
-        }
-        //Errors from Joi
-      else if(resError.details){
-            setError(_.map(resError.details, (x) => <div>{x.message}</div>))
+        if(resError)
+        { 
+          if (typeof resError === 'string'){
+              setError(resError);
+          }
+          //Errors from Joi
+          else if(resError.details){
+              setError(_.map(resError.details, (x) => <div>{x.message}</div>))
+          }else{
+              setError(err.response.data.message);
+          }
         }else{
-            setError(err.response.data.message);
+          console.log(err.message);
+          setError("Email or password were incorrect");
         }
-
         //Errors from Joi
         // if(resError.details){
         //     setError(_.map(resError.details, (x) => <div>{x.message}</div>))

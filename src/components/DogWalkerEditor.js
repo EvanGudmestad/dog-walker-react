@@ -3,14 +3,14 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 
 
-export function DogWalkerEditor({auth}){
+export function DogWalkerEditor({auth, showToast}){
     const {walkerId} = useParams();
     const navigate = useNavigate();
 
     const [walker,setWalker] = useState(null);
     const [success,setSuccess] = useState("");
     useEffect(()=>{
-        axios(`http://localhost:5000/api/walkers/${walkerId}`,{
+        axios(`${process.env.REACT_APP_API_URL}/api/walkers/${walkerId}`,{
             method:'get',
             headers:{
                 authorization: `Bearer ${auth?.token}`
@@ -49,9 +49,9 @@ export function DogWalkerEditor({auth}){
     function saveWalker(evt){
         evt.preventDefault();
         
-        console.log(`Walker age: ${walker.age}`)
+        //console.log(`Walker age: ${walker.age}`)
 
-        axios(`http://localhost:5000/api/walkers/${walkerId}`,{
+        axios(`${process.env.REACT_APP_API_URL}/api/walkers/${walkerId}`,{
             method:'post',
             headers:{
                 authorization: `Bearer ${auth?.token}`
@@ -60,9 +60,11 @@ export function DogWalkerEditor({auth}){
         }).then((res) =>{
             console.log(res.data);
             //setSuccess(res.data);
+            showToast('Dog Walker Saved!');
             navigate('/walker/list');
         }).catch((err) =>{
             console.log(err.message);    
+            showToast(err.message);
         });
 
     }

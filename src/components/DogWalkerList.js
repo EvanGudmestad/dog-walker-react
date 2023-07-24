@@ -4,6 +4,7 @@ import _ from 'lodash';
 import { DogWalkerItem } from './DogWalkerItem';
 
 
+
 export function DogWalkerList({auth}){
     const [dogWalkers,setDogWalkers] = useState(null);
     const [error,setError] = useState("");
@@ -11,11 +12,13 @@ export function DogWalkerList({auth}){
 
 
     useEffect(() =>{
-        axios('http://localhost:5000/api/walkers/list',{
+        console.log(`${process.env.REACT_APP_API_URL}`);
+        axios(`${process.env.REACT_APP_API_URL}/api/walkers/list`,{
             headers: {authorization: `Bearer ${auth?.token}`},
         }).then((res) =>{
             console.log(res.data);
             setDogWalkers(res.data);
+            setError("");
         }).catch((err) =>{
             setError(err.message);
         })
